@@ -5,10 +5,12 @@ interface UserState {
   userInfo: {
     uid: string
     email: string // 邮箱号
+    downloadUrl:string
   } | null
   roleInfo:{
     nickName:string,
-    roleId:string
+    roleId:string,
+    avatar:string,
   } | null
   hasBindGameAccount: boolean // 是否已绑定游戏账号
 }
@@ -62,7 +64,7 @@ export const useUserStore = defineStore('user', {
       }
     },
     // 绑定游戏账号
-    bindGameAccount(gameAccount: { roleId: string; nickName: string }) {
+    bindGameAccount(gameAccount: { roleId: string; nickName: string;avatar:string }) {
       if (gameAccount) {
         this.roleInfo = {
           ...gameAccount,

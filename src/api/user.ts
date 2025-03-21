@@ -75,6 +75,26 @@ export function getGoodsList(data: {
     params:data
   })
 }
+export function queryRole(data: { 
+  roleId: string; 
+}) {
+  return request({
+    url: '/shop/user/queryRole',
+    method: 'post',
+    data
+  })
+}
+export function bindRole(data: { 
+  roleId: string; 
+  avatar:string;
+  nickName:string;
+}) {
+  return request({
+    url: '/shop/user/bindRole',
+    method: 'post',
+    data
+  })
+}
 // 退出登录
 export function logout() {
   return request({

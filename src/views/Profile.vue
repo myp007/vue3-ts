@@ -44,9 +44,10 @@ const onBindGameAccount = () => {
 }
 
 // 处理游戏账号绑定成功
-const handleGameAccountBound = (gameAccount: { roleId: string, nickName: string }) => {
+const handleGameAccountBound = (gameAccount: { roleId: string, nickName: string,avatar:string }) => {
   // 更新用户信息中的游戏账号
   userStore.bindGameAccount({
+    avatar:gameAccount.avatar,
     roleId: gameAccount.roleId,
     nickName: gameAccount.nickName
   })
@@ -82,13 +83,13 @@ const handleLogout = () => {
     <div class="game-account-card">
       <div class="title">
         <span>游戏账号</span>
-        <!-- <van-button v-if="hasBindGameAccount" type="primary" size="small" class="action-btn"  @click="onBindGameAccount">
+        <van-button v-if="hasBindGameAccount" type="primary" size="small" class="action-btn"  @click="onBindGameAccount">
           修改
-        </van-button> -->
+        </van-button>
       </div>
       <div v-if="hasBindGameAccount" class="game-account-info">
         <div class="game-logo-wrapper">
-          <img :src="gameLogo" alt="游戏" class="game-logo" />
+          <img :src="roleInfo?.avatar ||gameLogo" alt="游戏" class="game-logo" />
         </div>
         <div class="game-info">
           <div class="game-name">{{ roleInfo?.nickName }}</div>
@@ -131,7 +132,7 @@ const handleLogout = () => {
       @update:step="gameBindStep = $event"
       @game-account-bound="handleGameAccountBound"
     />
-    <div class="bottom-view"><a>下载游戏了解更多内容！</a></div>
+    <div class="bottom-view"><a :href="userInfo?.downloadUrl" target="_blank">下载游戏了解更多内容！</a></div>
   </div>
 </template>
 

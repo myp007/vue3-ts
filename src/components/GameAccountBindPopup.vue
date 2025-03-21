@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, defineProps, defineEmits } from 'vue'
 import { showToast } from 'vant'
+import { queryRole ,bindRole} from '@/api/user'
 // 导入游戏图片
 import gameLogo from '../assets/images/9.png'
 
@@ -20,44 +21,46 @@ const isQueryingGame = ref(false)
 
 // 绑定状态
 const gameAccountInfo = ref({
+  avatar:'',
   roleId: '',
   nickName: '玩家昵称'
 })
 const isBindingGame = ref(false)
 
 // 查询游戏账号
-const queryGameAccount = () => {
+const queryGameAccount = async () => {
   if (!queryGameId.value) {
     showToast('请输入游戏ID')
     return
   }
   
   isQueryingGame.value = true
-  // 模拟查询请求
-  setTimeout(() => {
-    isQueryingGame.value = false
-    
-    // 模拟查询到的游戏账号信息
+  let gameUser:any = await queryRole ({roleId:queryGameId.value})
+  isQueryingGame.value = false
     gameAccountInfo.value = {
-      roleId: queryGameId.value,
-      nickName: '玩家昵称'
+      avatar:gameUser?.avatar,
+      roleId: gameUser.roleId,
+      nickName: gameUser.nickNmae,
     }
     
     // 切换到确认绑定步骤
     emit('update:step', 'confirm')
-  }, 1000)
 }
 
 // 确认绑定游戏账号
-const confirmBindGame = () => {
+const confirmBindGame = async () => {
   isBindingGame.value = true
-  // 模拟绑定请求
-  setTimeout(() => {
+  let bindInfo:any = await bindRole ({
+    roleId:gameAccountInfo.value.roleId,
+    avatar:gameAccountInfo.value.avatar,
+    nickName: gameAccountInfo.value.nickName
+  })
+  if(bindInfo){
     isBindingGame.value = false
-    
     // 保存绑定信息到本地存储
     localStorage.setItem('gameAccountBound', 'true')
     localStorage.setItem('roleInfo', JSON.stringify({
+      avatar:gameAccountInfo.value.avatar,
       roleId: gameAccountInfo.value.roleId,
       nickName: gameAccountInfo.value.nickName
     }))
@@ -65,7 +68,10 @@ const confirmBindGame = () => {
     closePopup()
     // 通知父组件已绑定
     emit('gameAccountBound', gameAccountInfo.value)
-  }, 1000)
+  }else{
+    closePopup()
+    showToast('游戏账号绑定失败')
+  }
 }
 
 // 关闭弹窗
@@ -125,7 +131,7 @@ const closePopup = () => {
       </div>
       <div class="popup-content">
         <div class="game-account-preview">
-          <img :src="gameLogo" alt="游戏" class="game-avatar" />
+          <img :src="gameAccountInfo.avatar ||gameLogo" alt="游戏" class="game-avatar" />
           <div class="game-account-info">
             <div class="game-nickname">{{ gameAccountInfo.nickName }}</div>
             <div class="game-id-display">ID:{{ gameAccountInfo.roleId }}</div>

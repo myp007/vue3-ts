@@ -14,6 +14,7 @@ const router = useRouter()
 const userStore = useUserStore()
 
 // 用户信息
+const userInfo = computed(() => userStore.userInfo)
 const roleInfo = computed(() => userStore.roleInfo)
 // 是否已绑定游戏账号
 const hasBindGameAccount = computed(() => userStore.hasBindGameAccount)
@@ -80,9 +81,10 @@ const goToBindGameAccount = () => {
 
 // 处理游戏账号绑定成功
 // 处理游戏账号绑定成功
-const handleGameAccountBound = (gameAccount: { roleId: string, nickName: string }) => {
+const handleGameAccountBound = (gameAccount: { roleId: string, nickName: string ,avatar:string}) => {
   // 更新用户信息中的游戏账号
   userStore.bindGameAccount({
+    avatar:gameAccount.avatar,
     roleId: gameAccount.roleId,
     nickName: gameAccount.nickName
   })
@@ -237,7 +239,7 @@ const logout = () => {
       @update:step="gameBindStep = $event"
       @game-account-bound="handleGameAccountBound"
     />
-    <div class="bottom-view"><a>下载游戏了解更多内容！</a></div>
+    <div class="bottom-view"><a :href="userInfo?.downloadUrl" target="_blank">下载游戏了解更多内容！</a></div>
   </div>
 </template>
 
