@@ -6,8 +6,7 @@
  * @FilePath: \h5\yuerbao\src\utils\config.js
  */
 const configInfo = {
-    baseUrl: 'https://hwsdkapi.market99.net', 
-    // baseUrl: 'https://seasdkapi.muzigame.com/v1', 
+    baseUrl: 'https://coinmatchapi.market99.net', 
     gameId:'1000'
 }
 export default configInfo

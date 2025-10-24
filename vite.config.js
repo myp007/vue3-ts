@@ -22,12 +22,12 @@ export default defineConfig({
         Components({
             resolvers: [VantResolver()],
         }),
-        VueMcp({
-              // 可选配置项
-              host: 'localhost',
-              port:4000,
-              printUrls: true
-            })
+        // VueMcp({
+        //       // 可选配置项
+        //       host: '0.0.0.0',
+        //       port:4000,
+        //       printUrls: true
+        //     })
     ],
     resolve: {
         alias: {

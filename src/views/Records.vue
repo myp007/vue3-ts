@@ -91,7 +91,7 @@ const copy = (order: any) => {
     aux.select();
     document.execCommand("copy"); 
     document.body.removeChild(aux);
-    showToast('复制订单号: ' + order.orderNo)
+    showToast('สำเนาหมายเลขใบสั่งซื้อ: ' + order.orderNo)
   
 }
 </script>
@@ -99,41 +99,40 @@ const copy = (order: any) => {
 <template>
   <div class="records-container">
     <!-- 使用AppHeader组件 -->
-    <AppHeader title="购买记录" />
-
+    <AppHeader title="บันทึก" />
     <!-- 购买记录列表 -->
-    <van-pull-refresh v-model="refreshing" @refresh="onRefresh" success-text="刷新成功">
+    <van-pull-refresh v-model="refreshing" @refresh="onRefresh" success-text="รีเฟรชสำเร็จ" loosing-text="ปล่อยเพื่อรีเฟรช" loading-text="กำลังโหลด">
       <van-list
         v-model:loading="loading"
         :finished="finished"
-        :finished-text="records?.length > 0 ? '没有更多了' : ''"
+        :finished-text="records?.length > 0 ? 'ไม่มีอีกต่อไป' : ''"
         @load="onLoad"
       >
         <div class="records-list" v-if="records?.length > 0">
           <div class="record-item" v-for="record in records" :key="record.id">
             <div class="record-header">
               <div class="order-left">
-              <span class="order-no">订单号：{{ record.orderNo }}</span>
-              <div class="copy-but" @click="copy(record)">复制</div>
+              <span class="order-no">หมายเลขคำสั่งซื้อ：{{ record.orderNo }}</span>
+              <div class="copy-but" @click="copy(record)">คัดลอก</div>
               </div>
               
               <span class="order-time">{{ record.createAt }}</span>
             </div>
             <div class="record-content" >
               <div class="product-info">
-                <img :src="record.img || defaultImg" alt="金币" class="product-img" />
+                <img :src="record.img || defaultImg" alt="" class="product-img" />
                 <div class="product-detail">
                   <div class="product-name">{{ record.productName }}</div>
                 </div>
               </div>
-              <div class="product-price">￥{{ record.amount }}</div>
+              <div class="product-price">฿{{ record.amount }}</div>
             </div>
             <div class="record-actions">
               <div class="uid">ID:{{ record.uid }}</div>
               <div>
-                <span v-if="record.status == 0" class="delivery-status">未支付</span>
-                <span v-else-if="record.status == 1" class="delivery-status status1">支付成功</span>
-                <span v-else-if="record.status == 2" class="delivery-status">发货成功</span>
+                <span v-if="record.status == 0" class="delivery-status">ไม่ได้ชำระเงิน</span>
+                <span v-else-if="record.status == 1" class="delivery-status status1">ชำระเงินสำเร็จแล้ว</span>
+                <span v-else-if="record.status == 2" class="delivery-status">การจัดส่งสำเร็จ</span>
               </div>
               
             </div>
@@ -146,7 +145,7 @@ const copy = (order: any) => {
           <van-empty
           image="https://fastly.jsdelivr.net/npm/@vant/assets/custom-empty-image.png"
           image-size="80"
-          description="暂无购买记录"
+          description="ไม่มีประวัติการซื้อ"
         />
           <!-- <p>暂无购买记录</p> -->
         </div>
@@ -155,7 +154,7 @@ const copy = (order: any) => {
 
     <!-- 底部说明 -->
     <div class="footer-note">
-      <p>若超过30分钟未收到商品，请联系客服</p>
+      <p>หากไม่ได้รับสินค้าเกิน 30 นาที กรุณาติดต่อฝ่ายบริการลูกค้า</p>
     </div>
   </div>
 </template>

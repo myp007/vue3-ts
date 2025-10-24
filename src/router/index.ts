@@ -17,13 +17,13 @@ const routes: RouteRecordRaw[] = [
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login.vue'),
-    meta: { title: '登录' }
+    meta: { title: 'เข้าสู่ระบบ' }
   },
   {
     path: '/register',
     name: 'Register',
     component: () => import('@/views/Register.vue'),
-    meta: { title: '注册' }
+    meta: { title: 'ยินดีต้อนรับสู่การลงทะเบียน' }
   },
   {
     path: '/',
@@ -33,19 +33,19 @@ const routes: RouteRecordRaw[] = [
         path: 'home',
         name: 'Home',
         component: () => import('@/views/Home.vue'),
-        meta: { title: '首页', requiresAuth: true }
+        meta: { title: 'ร้านค้า', requiresAuth: true }
       },
       {
         path: 'records',
         name: 'Records',
         component: () => import('@/views/Records.vue'),
-        meta: { title: '购买记录', requiresAuth: true }
+        meta: { title: 'บันทึก', requiresAuth: true }
       },
       {
         path: 'profile',
         name: 'Profile',
         component: () => import('@/views/Profile.vue'),
-        meta: { title: '我的', requiresAuth: true }
+        meta: { title: 'ของฉัน', requiresAuth: true }
       }
     ]
   }
@@ -59,7 +59,7 @@ const router = createRouter({
 // 路由守卫
 router.beforeEach((to, from, next) => {
   // 设置标题
-  document.title = to.meta.title as string || '鱼饵宝商城'
+  document.title = to.meta.title as string || 'ร้านค้า'
   console.log(from)
   // 判断是否需要登录权限
   if (to.meta.requiresAuth) {

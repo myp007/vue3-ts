@@ -18,12 +18,12 @@ const showConfirmPassword = ref(false)
 // 修改密码
 const changePassword = async () => {
   if (!password.value || !confirmPassword.value) {
-    showToast('请输入密码')
+    showToast('กรุณากรอกรหัสผ่านของคุณ')
     return
   }
   
   if (password.value !== confirmPassword.value) {
-    showToast('两次输入的密码不一致')
+    showToast('รหัสผ่านที่คุณป้อนสองครั้งไม่ตรงกัน')
     return
   }
   
@@ -33,7 +33,7 @@ const changePassword = async () => {
   }
   await updatePwd(params)
   isChangingPassword.value = false
-    showToast('密码修改成功')
+    showToast('เปลี่ยนรหัสผ่านสำเร็จแล้ว')
     closePopup()
     password.value = ''
     confirmPassword.value = ''
@@ -63,19 +63,19 @@ const toggleConfirmPasswordVisibility = () => {
   >
     <div class="popup-container">
       <div class="popup-header">
-        <div class="popup-title">修改密码</div>
+        <div class="popup-title">เปลี่ยนรหัสผ่าน</div>
         <div class="close-icon" @click="closePopup">×</div>
       </div>
       <div class="popup-content">
         <div class="popup-form">
           <div class="form-row account-row">
-            账号：{{ props.username || '-' }}
+            บัญชี：{{ props.username || '-' }}
           </div>
           <div class="form-row">
             <van-field
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
-              placeholder="请输入新密码"
+              placeholder="กรุณากรอกรหัสผ่านใหม่"
               class="custom-field"
             >
             <template #right-icon>
@@ -91,7 +91,7 @@ const toggleConfirmPasswordVisibility = () => {
             <van-field
               v-model="confirmPassword"
               :type="showConfirmPassword ? 'text' : 'password'"
-              placeholder="请再次输入新密码"
+              placeholder="กรุณากรอกรหัสผ่านใหม่อีกครั้ง"
               class="custom-field"
               right-icon="eye-o"
             >
@@ -113,7 +113,7 @@ const toggleConfirmPasswordVisibility = () => {
             class="action-button"
             @click="changePassword"
           >
-            立即修改
+          ปรับเปลี่ยนทันที
           </van-button>
         </div>
       </div>

@@ -2,6 +2,9 @@ import request from '@/utils/request'
 
 export function submitOrder(data: {
   productId: string; 
+  accountNo: string;
+  customerName: string;
+
 }) {
   return request({
     url: '/shop/order/store',

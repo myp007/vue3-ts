@@ -2,14 +2,14 @@
 import { ref ,onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store/user'
-import { showSuccessToast, showToast,showLoadingToast,closeToast  ,Dialog } from 'vant';
+import { showToast,showLoadingToast,closeToast  ,Dialog } from 'vant';
 import AppHeader from '@/components/layout/AppHeader.vue'
 import GameAccountBindPopup from '@/components/GameAccountBindPopup.vue'
 import { getGoodsList} from '@/api/user'
 import { submitOrder} from '@/api/product'
 // 导入商品图片
 import coin8 from '../assets/images/8.png'
-
+const gameLogo = 'https://demo-static.gudagame.com/images/avatar/0.png'
 const router = useRouter()
 const userStore = useUserStore()
 
@@ -31,7 +31,8 @@ const selectedProduct = ref<any>(null)
 // 游戏账号绑定弹窗
 const showGameBindDialog = ref(false)
 const gameBindStep = ref('query')
-
+const accountNo = ref('')
+const customerName =  ref('')
 // 商品列表
 interface productItem {
     id: number
@@ -53,7 +54,7 @@ onMounted(() => {
 const fetchProducts = async () => {
   loading.value = true
   showLoadingToast({
-    message: '加载中...',
+    message: 'กำลังโหลด...',
     forbidClick: true,
   });
   
@@ -95,7 +96,7 @@ const selectProduct = (product: any) => {
   // 如果未绑定游戏账号，显示提示
   if (!hasBindGameAccount.value) {
     // 显示提示绑定游戏账号后再购买
-    showToast('请先绑定游戏账号')
+    showToast('กรุณาผูกบัญชีเกมของคุณก่อน')
     return
   }
   
@@ -108,19 +109,29 @@ const selectProduct = (product: any) => {
 const confirmBuy =async () => {
   if (!selectedProduct.value) return
   showLoadingToast ({
-    message: '购买中...',
+    message: 'กำลังซื้อ...',
     forbidClick: true,
     duration: 0
   })
-  await submitOrder({
-    productId:selectedProduct.value.id
+  let orderInfo : any = await submitOrder({
+    productId:selectedProduct.value.id,
+    accountNo:accountNo.value,
+    customerName:customerName.value,
+
   })
-  
-  closeToast()
-    showSuccessToast('购买成功')
+  if(orderInfo?.url){
+    let url = orderInfo?.url
+    console.log(url)
+    window.open(url)
+    closeToast()
     showBuyDialog.value = false
     selectedProduct.value = null
-    router.push('/records')
+    router.push('/Records')
+  }else{
+    closeToast()
+    showToast(orderInfo?.msg)
+  }
+  
 }
 
 // 取消购买
@@ -132,10 +143,10 @@ const cancelBuy = () => {
 // 退出登录
 const logout = () => {
   Dialog.confirm({
-    title: '提示',
-    message: '确定要退出登录吗？',
-    confirmButtonText: '确定',
-    cancelButtonText: '取消'
+    title: 'คำใบ้',
+    message: 'คุณแน่ใจว่าต้องการออกจากระบบหรือไม่?',
+    confirmButtonText: 'แน่นอน',
+    cancelButtonText: 'ยกเลิก'
   }).then(() => {
     // 清除本地存储的绑定信息
     localStorage.removeItem('gameAccountBound')
@@ -152,7 +163,7 @@ const logout = () => {
 <template>
   <div class="home-container">
     <!-- 使用AppHeader组件 -->
-    <AppHeader title="商城">
+    <AppHeader title="ร้านค้า">
       <template #right>
         <div class="logout-icon" @click="logout">
           <van-icon name="exit" size="18" />
@@ -162,7 +173,7 @@ const logout = () => {
     
     <!-- 商品列表视图 -->
     <template v-if="hasBindGameAccount">
-      <van-pull-refresh v-model="refreshing" @refresh="onRefresh" class="refresh-view">
+      <van-pull-refresh v-model="refreshing" @refresh="onRefresh" class="refresh-view" loosing-text="ปล่อยเพื่อรีเฟรช" loading-text="กำลังโหลด">
         <div class="product-grid">
           <div 
             v-for="product in productsList" 
@@ -174,16 +185,16 @@ const logout = () => {
             <div class="product-img">
               <img :src="product.img || coin8" :alt="product.name" />
             </div>
-            <div class="price-btn" @click="selectProduct(product)">￥{{ product.amount }}</div>
+            <div class="price-btn" @click="selectProduct(product)">฿{{ product.amount }}</div>
           </div>
         </div>
       </van-pull-refresh>
     </template>
     <!-- 未绑定游戏账号时显示绑定提示 -->
     <div v-else class="bind-account-container">
-      <p class="bind-tip">请先绑定您的游戏账号</p>
+      <p class="bind-tip">กรุณาผูกบัญชีเกมของคุณก่อน</p>
       <van-button type="primary" block class="bind-btn" @click="goToBindGameAccount">
-        点击绑定
+        คลิกเพื่อผูกบัญชี
       </van-button>
     </div>
     
@@ -198,34 +209,57 @@ const logout = () => {
     >
       <div class="popup-container">
         <div class="popup-header">
-          <div class="popup-title">商品购买</div>
+          <div class="popup-title">การซื้อสินค้า</div>
           <div class="close-icon" @click="cancelBuy">×</div>
         </div>
         <div v-if="selectedProduct" class="popup-content">
           <div class="product-detail">
-            <img :src="selectedProduct.image || coin8" alt="商品图片" class="product-image" />
+            <img :src="selectedProduct.image || coin8" alt="" class="product-image" />
            
             <div class="product-info">
               <div class="product-count-label">{{ selectedProduct.name }}</div>
-              <div class="product-price-label">￥{{ selectedProduct.amount }}</div>
+              <div class="product-price-label">฿{{ selectedProduct.amount }}</div>
             </div>
           </div>
           
           <div class="game-account-info" v-if="roleInfo?.roleId">
-            <img src="../assets/images/9.png" alt="游戏" class="game-avatar" />
+            <img :src="roleInfo.avatar || gameLogo" alt="" class="game-avatar" />
             <div class="game-detail">
               <div class="game-name">{{ roleInfo.nickName }}</div>
-              <div class="game-id">ID:{{ roleInfo.roleId }}</div>
+              <div class="game-id">บัตรประจำตัว:{{ roleInfo.roleId }}</div>
             </div>
           </div>
-          
+          <div class="input"> 
+            <div class="field-container">
+              <!-- <div class="field-label">付款账号</div> -->
+              <van-field
+                v-model="accountNo"
+                type="text"
+                placeholder="กรุณากรอกหมายเลขบัญชีชำระเงินของคุณ"
+                class="custom-field"
+                clearable
+                center
+              />
+            </div>
+            <div class="field-container">
+              <!-- <div class="field-label">付款账号名称</div> -->
+              <van-field
+                v-model="customerName"
+                type="text"
+                placeholder="กรุณาระบุชื่อบัญชีชำระเงิน"
+                class="custom-field"
+                clearable
+                center
+              />
+            </div>
+          </div>
           <van-button 
             type="primary" 
             block 
             class="purchase-btn"
             @click="confirmBuy"
           >
-            去付款
+          ชำระเงิน
           </van-button>
         </div>
       </div>
@@ -239,7 +273,7 @@ const logout = () => {
       @update:step="gameBindStep = $event"
       @game-account-bound="handleGameAccountBound"
     />
-    <div class="bottom-view"><a :href="userInfo?.downloadUrl" target="_blank">下载游戏了解更多内容！</a></div>
+    <div class="bottom-view"><a :href="userInfo?.downloadUrl" target="_blank">ดาวน์โหลดเกมเพื่อเรียนรู้เพิ่มเติม!</a></div>
   </div>
 </template>
 
@@ -469,5 +503,15 @@ const logout = () => {
   font-size: 16px;
   border-radius: 22px;
   background-color: #1989fa;
+}
+.field-container{
+  
+  margin-bottom: 10px;
+}
+.custom-field{
+  border: 1px solid #f5f5f5;
+  background: #f5f5f5;
+  border-radius: 8px;
+  color: #333;
 }
 </style> 

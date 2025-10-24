@@ -42,11 +42,11 @@ const isSubmitDisabled = computed(() => {
 
 const validateEmail = () => {
   if (!email.value) {
-    showToast('请输入邮箱地址')
+    showToast('กรุณากรอกอีเมล')
     return false
   }
   if (!emailPattern.test(email.value)) {
-    showToast('请输入正确的邮箱地址')
+    showToast('กรุณากรอกอีเมลที่ถูกต้อง')
     return false
   }
   return true
@@ -70,7 +70,7 @@ const startCountdown = async () => {
       method:'login'
     }
     await sendVerifyCode(params)
-    showToast('验证码已发送')
+    showToast('ส่งรหัสยืนยันแล้ว')
     countdown.value = 120 // 120秒倒计时
     const timer = setInterval(() => {
       countdown.value--
@@ -79,8 +79,7 @@ const startCountdown = async () => {
       }
     }, 1000)
   } catch (error) {
-    console.error('发送验证码失败:', error)
-    showToast('发送验证码失败')
+    showToast('ไม่สามารถส่งรหัสยืนยันได้')
   }
 }
 
@@ -95,17 +94,17 @@ const onSubmit = async () => {
       userStore.setToken(info.token)
     // userStore.setUserInfo(mockUserInfo)
       getUser()
-      showSuccessToast('登录成功！')
+      showSuccessToast('เข้าสู่ระบบสำเร็จ!')
     } else {
       // 验证码登录
       const codeinfo : any  = await login({ email: email.value, code: verifyCode.value })
       userStore.setToken(codeinfo.token)
       getUser()
-      showToast('登录成功！')
+      showToast('เข้าสู่ระบบสำเร็จ!')
     }
   } catch (error) {
-    console.error('登录失败:', error)
-    showToast('登录失败，请检查账号密码')
+    console.error('การเข้าสู่ระบบล้มเหลว:', error)
+    showToast('การเข้าสู่ระบบล้มเหลว')
   } finally {
     loading.value = false
   }
@@ -126,27 +125,27 @@ const goToRegister = () => {
 <template>
   <div class="login">
     <div class="login-bg">
-      <img src="@/assets/images/login-bg.jpg" alt="背景" />
+      <img src="@/assets/images/login-bg.jpg" alt="" />
     </div>
     <div class="login-icons">
-      <img src="@/assets/images/login-huli.png" alt="狐狸" class="huli-icon" />
+      <img src="@/assets/images/login-huli.png" alt="" class="huli-icon" />
       <img src="@/assets/images/login-logo.png" alt="Logo" class="logo-icon" />
     </div>
     <div class="login-content">
       <div class="form-container">
-        <h2 class="title">{{ loginType === 'password' ? '密码登录' : '验证码登录' }}</h2>
+        <h2 class="title">{{ loginType === 'password' ? 'เข้าสู่ระบบด้วยรหัสผ่าน' : 'เข้าสู่ระบบด้วยรหัสยืนยัน' }}</h2>
         <van-form @submit="onSubmit" class="login-form">
           <div class="field-container">
             <!-- <div class="field-label">邮箱</div> -->
             <van-field
               v-model="email"
               name="email"
-              placeholder="请输入邮箱地址"
+              placeholder="กรุณากรอกอีเมล"
               class="custom-field"
               clearable
               center
             />
-            <div class="error-message" v-if="email && !emailPattern.test(email)">请输入正确的邮箱地址</div>
+            <div class="error-message" v-if="email && !emailPattern.test(email)">กรุณากรอกอีเมลที่ถูกต้อง</div>
           </div>
           
           <div class="field-container" v-if="loginType === 'password'">
@@ -155,7 +154,7 @@ const goToRegister = () => {
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
               name="password"
-              placeholder="请输入密码"
+              placeholder="กรุณาใส่รหัสผ่าน"
               class="custom-field"
               center
             >
@@ -167,7 +166,7 @@ const goToRegister = () => {
                 />
               </template>
             </van-field>
-            <div class="error-message" v-if="password === ''">请输入密码</div>
+            <div class="error-message" v-if="password === ''">กรุณาใส่รหัสผ่าน</div>
           </div>
           
           <div class="field-container" v-if="loginType === 'code'">
@@ -176,7 +175,7 @@ const goToRegister = () => {
               <van-field
                 v-model="verifyCode"
                 name="verifyCode"
-                placeholder="请输入验证码"
+                placeholder="กรุณากรอกรหัสยืนยัน"
                 class="custom-field"
                 maxlength="6"
                 center
@@ -186,21 +185,21 @@ const goToRegister = () => {
                 :class="{ disabled: countdown > 0 }"
                 @click="startCountdown"
               >
-                <span v-if="countdown > 0">重新发送({{ countdown }}s)</span>
-                <span v-else>获取验证码</span>
+                <span v-if="countdown > 0">ส่งใหม่อีกครั้ง({{ countdown }}s)</span>
+                <span v-else>รับรหัสยืนยัน</span>
               </div>
             </div>
-            <div class="error-message" v-if="verifyCode === ''">请输入验证码</div>
+            <div class="error-message" v-if="verifyCode === ''">กรุณากรอกรหัสยืนยัน</div>
           </div>
           
           <div class="options-row">
             <div class="login-type-left">
             <van-checkbox v-model="rememberPassword" shape="round" icon-size="16px" v-if="loginType === 'password'">
-                <span>记住密码</span>
+                <span>จดจำรหัสผ่าน</span>
               </van-checkbox>
             </div>
             <div class="login-type-toggle" @click="toggleLoginType">
-              {{ loginType === 'password' ? '验证码登录' : '密码登录' }}
+              {{ loginType === 'password' ? 'เข้าสู่ระบบด้วยรหัสยืนยัน' : 'เข้าสู่ระบบด้วยรหัสผ่าน' }}
             </div>
           </div>
           
@@ -214,11 +213,11 @@ const goToRegister = () => {
               :disabled="isSubmitDisabled"
               :class="{ 'btn-disabled': isSubmitDisabled }"
             >
-              登录
+            เข้าสู่ระบบ
             </van-button>
           </div>
           <div class="register-link">
-            <span>还没有账号？<span class="highlight" @click="goToRegister">立即注册</span></span>
+            <span>ยังไม่มีบัญชี?<span class="highlight" @click="goToRegister">ลงทะเบียนเลย</span></span>
           </div>
         </van-form>
       </div>

@@ -48,11 +48,11 @@ const isSubmitDisabled = computed(() => {
 
 const validateEmail = () => {
   if (!email.value) {
-    showToast('请输入邮箱地址')
+    showToast('กรุณากรอกอีเมล')
     return false
   }
   if (!emailPattern.test(email.value)) {
-    showToast('请输入正确的邮箱地址')
+    showToast('กรุณากรอกอีเมลที่ถูกต้อง')
     return false
   }
   return true
@@ -76,7 +76,7 @@ const startCountdown = async () => {
       method:'register'
     }
     await sendVerifyCode(params)
-    showToast('验证码已发送')
+    showToast('ส่งรหัสยืนยันแล้ว')
     countdown.value = 120 // 120秒倒计时
     const timer = setInterval(() => {
       countdown.value--
@@ -85,8 +85,7 @@ const startCountdown = async () => {
       }
     }, 1000)
   } catch (error) {
-    console.error('发送验证码失败:', error)
-    showToast('发送验证码失败')
+    showToast('ไม่สามารถส่งรหัสยืนยันได้')
   }
 }
 
@@ -99,7 +98,7 @@ const onSubmit = async () => {
   // }
   
   if (password.value !== confirmPassword.value) {
-    showToast('两次输入的密码不一致')
+    showToast('รหัสผ่านที่คุณป้อนสองครั้งไม่ตรงกัน')
     return
   }
 
@@ -112,11 +111,10 @@ const onSubmit = async () => {
       code: verifyCode.value
     })
     
-    showToast('注册成功,请登录')
+    showToast('ลงทะเบียนสำเร็จ กรุณาเข้าสู่ระบบ')
     router.push('/login')
   } catch (error) {
-    console.error('注册失败:', error)
-    showToast('注册失败')
+    showToast('ลงทะเบียนล้มเหลว')
   } finally {
     loading.value = false
   }
@@ -130,26 +128,26 @@ const goToLogin = () => {
 <template>
   <div class="register">
     <div class="register-bg">
-      <img src="@/assets/images/login-bg.jpg" alt="背景" />
+      <img src="@/assets/images/login-bg.jpg" alt="" />
     </div>
     <div class="register-icons">
-      <img src="@/assets/images/login-huli.png" alt="狐狸" class="huli-icon" />
+      <img src="@/assets/images/login-huli.png" alt="" class="huli-icon" />
       <img src="@/assets/images/login-logo.png" alt="Logo" class="logo-icon" />
     </div>
     <div class="register-content">
       <div class="form-container">
-        <h2 class="title">欢迎注册</h2>
+        <h2 class="title">ยินดีต้อนรับสู่การลงทะเบียน</h2>
         <van-form @submit="onSubmit" class="register-form">
           <div class="field-container">
             <!-- <div class="field-label">邮箱地址</div> -->
             <van-field
               v-model="email"
               name="email"
-              placeholder="请输入邮箱地址"
+              placeholder="กรุณากรอกอีเมล"
               class="custom-field"
               center
             />
-            <div class="error-message" v-if="email && !emailPattern.test(email)">请输入正确的邮箱地址</div>
+            <div class="error-message" v-if="email && !emailPattern.test(email)">กรุณากรอกอีเมลที่ถูกต้อง</div>
           </div>
           
           
@@ -160,7 +158,7 @@ const goToLogin = () => {
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
               name="password"
-              placeholder="请输入密码"
+              placeholder="กรุณาใส่รหัสผ่าน"
               class="custom-field"
               center
             >
@@ -172,7 +170,7 @@ const goToLogin = () => {
                 />
               </template>
             </van-field>
-            <div class="error-message" v-if="password === ''">请输入密码</div>
+            <div class="error-message" v-if="password === ''">กรุณาใส่รหัสผ่าน</div>
           </div>
           
           <div class="field-container">
@@ -181,7 +179,7 @@ const goToLogin = () => {
               v-model="confirmPassword"
               :type="showConfirmPassword ? 'text' : 'password'"
               name="confirmPassword"
-              placeholder="请再次输入密码"
+              placeholder="กรุณากรอกรหัสผ่านอีกครั้ง"
               class="custom-field"
               center
             >
@@ -193,8 +191,8 @@ const goToLogin = () => {
                 />
               </template>
             </van-field>
-            <div class="error-message" v-if="confirmPassword === ''">请再次输入密码</div>
-            <div class="error-message" v-if="confirmPassword && password && confirmPassword !== password">两次输入的密码不一致</div>
+            <div class="error-message" v-if="confirmPassword === ''">กรุณากรอกรหัสผ่านอีกครั้ง</div>
+            <div class="error-message" v-if="confirmPassword && password && confirmPassword !== password">รหัสผ่านที่คุณป้อนสองครั้งไม่ตรงกัน</div>
           </div>
           <div class="field-container">
             <!-- <div class="field-label">验证码</div> -->
@@ -202,7 +200,7 @@ const goToLogin = () => {
               <van-field
                 v-model="verifyCode"
                 name="verifyCode"
-                placeholder="请输入验证码"
+                placeholder="กรุณากรอกรหัสยืนยัน"
                 class="custom-field"
                 maxlength="6"
                 center
@@ -212,11 +210,11 @@ const goToLogin = () => {
                 :class="{ disabled: countdown > 0 }"
                 @click="startCountdown"
               >
-                <span v-if="countdown > 0">重新发送({{ countdown }}s)</span>
-                <span v-else>获取验证码</span>
+                <span v-if="countdown > 0">ส่งใหม่อีกครั้ง({{ countdown }}s)</span>
+                <span v-else>รับรหัสยืนยัน</span>
               </div>
             </div>
-            <div class="error-message" v-if="verifyCode === ''">请输入验证码</div>
+            <div class="error-message" v-if="verifyCode === ''">กรุณากรอกรหัสยืนยัน</div>
           </div>
           <!-- <div class="agreement-checkbox">
             <van-checkbox v-model="agreeProtocol" shape="round" icon-size="16px">
@@ -236,11 +234,11 @@ const goToLogin = () => {
               :disabled="isSubmitDisabled "
               :class="{ 'btn-disabled': isSubmitDisabled }"
             >
-              立即注册
+            ลงทะเบียนตอนนี้
             </van-button>
           </div>
           <div class="login-link">
-            <span>已有账号？<span class="highlight" @click="goToLogin">立即登录</span></span>
+            <span>มีบัญชีอยู่แล้ว?<span class="highlight" @click="goToLogin">เข้าสู่ระบบทันที</span></span>
           </div>
         </van-form>
       </div>

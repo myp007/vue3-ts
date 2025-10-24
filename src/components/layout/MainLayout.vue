@@ -8,9 +8,9 @@
       <router-view />
     </div>
     <van-tabbar route>
-      <van-tabbar-item replace to="/home" icon="shop">商城</van-tabbar-item>
-      <van-tabbar-item replace to="/records" icon="records">记录</van-tabbar-item>
-      <van-tabbar-item replace to="/profile" icon="user-o">我的</van-tabbar-item>
+      <van-tabbar-item replace to="/home" icon="shop">ร้านค้า</van-tabbar-item>
+      <van-tabbar-item replace to="/records" icon="records">บันทึก</van-tabbar-item>
+      <van-tabbar-item replace to="/profile" icon="user-o">ของฉัน</van-tabbar-item>
     </van-tabbar>
     
   </div>

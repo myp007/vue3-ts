@@ -23,14 +23,14 @@ const isQueryingGame = ref(false)
 const gameAccountInfo = ref({
   avatar:'',
   roleId: '',
-  nickName: '玩家昵称'
+  nickName: 'ชื่อเล่นของผู้เล่น'
 })
 const isBindingGame = ref(false)
 
 // 查询游戏账号
 const queryGameAccount = async () => {
   if (!queryGameId.value) {
-    showToast('请输入游戏ID')
+    showToast('กรุณากรอกรหัสเกม')
     return
   }
   
@@ -64,13 +64,13 @@ const confirmBindGame = async () => {
       roleId: gameAccountInfo.value.roleId,
       nickName: gameAccountInfo.value.nickName
     }))
-    showToast('游戏账号绑定成功')
+    showToast('การผูกบัญชีเกมสำเร็จแล้ว')
     closePopup()
     // 通知父组件已绑定
     emit('gameAccountBound', gameAccountInfo.value)
   }else{
     closePopup()
-    showToast('游戏账号绑定失败')
+    showToast('การเชื่อมโยงบัญชีเกมล้มเหลว')
   }
 }
 
@@ -98,14 +98,14 @@ const closePopup = () => {
     <!-- 查询游戏账号弹窗 -->
     <div v-if="props.step === 'query'" class="popup-container">
       <div class="popup-header">
-        <div class="popup-title">游戏账号绑定</div>
+        <div class="popup-title">การผูกบัญชีเกม</div>
         <div class="close-icon" @click="closePopup">×</div>
       </div>
       <div class="popup-content">
         <div class="popup-form">
           <van-field
             v-model="queryGameId"
-            placeholder="请输入游戏ID"
+            placeholder="กรุณากรอกรหัสเกม"
             class="custom-field"
           />
         </div>
@@ -117,7 +117,7 @@ const closePopup = () => {
             class="action-button"
             @click="queryGameAccount"
           >
-            查询
+          สอบถามข้อมูล
           </van-button>
         </div>
       </div>
@@ -126,15 +126,15 @@ const closePopup = () => {
     <!-- 游戏账号绑定确认弹窗 -->
     <div v-else-if="props.step === 'confirm'" class="popup-container">
       <div class="popup-header">
-        <div class="popup-title">游戏账号绑定</div>
+        <div class="popup-title">การผูกบัญชีเกม</div>
         <div class="close-icon" @click="closePopup">×</div>
       </div>
       <div class="popup-content">
         <div class="game-account-preview">
-          <img :src="gameAccountInfo.avatar ||gameLogo" alt="游戏" class="game-avatar" />
+          <img :src="gameAccountInfo.avatar ||gameLogo" alt="" class="game-avatar" />
           <div class="game-account-info">
             <div class="game-nickname">{{ gameAccountInfo.nickName }}</div>
-            <div class="game-id-display">ID:{{ gameAccountInfo.roleId }}</div>
+            <div class="game-id-display">บัตรประจำตัว:{{ gameAccountInfo.roleId }}</div>
           </div>
         </div>
         <div class="popup-action">
@@ -145,7 +145,7 @@ const closePopup = () => {
             class="action-button"
             @click="confirmBindGame"
           >
-            立即绑定
+            ผูกตอนนี้
           </van-button>
         </div>
       </div>
